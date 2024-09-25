@@ -16,5 +16,10 @@ namespace APPR_TriviaBlitz_22SD_Dman
         {
             InitializeComponent();
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            //
+        }
     }
 }
