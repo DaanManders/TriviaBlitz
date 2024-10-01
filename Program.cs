@@ -16,7 +16,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new RegisterForm());
         }
     }
 }
