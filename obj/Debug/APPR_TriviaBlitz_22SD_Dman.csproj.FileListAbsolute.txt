@@ -9,3 +9,4 @@ C:\Users\gebruiker\Documents\APPR - Applicatie Programmeren\L3P1\APPR_TriviaBlit
 C:\Users\gebruiker\Documents\APPR - Applicatie Programmeren\L3P1\APPR_TriviaBlitz_22SD_Dman\obj\Debug\APPR_TriviaBlitz_22SD_Dman.pdb
 C:\Users\gebruiker\Documents\APPR - Applicatie Programmeren\L3P1\APPR_TriviaBlitz_22SD_Dman\obj\Debug\APPR_TriviaBlitz_22SD_Dman.RegisterForm.resources
 C:\Users\gebruiker\Documents\APPR - Applicatie Programmeren\L3P1\APPR_TriviaBlitz_22SD_Dman\obj\Debug\APPR_TriviaBlitz_22SD_Dman.LoginForm.resources
+C:\Users\gebruiker\Documents\APPR - Applicatie Programmeren\L3P1\APPR_TriviaBlitz_22SD_Dman\obj\Debug\APPR_TriviaBlitz_22SD_Dman.Controller.resources

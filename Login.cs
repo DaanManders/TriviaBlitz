@@ -96,6 +96,10 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
                     // Hide Login Form.
                     this.Hide();
+
+                    // Show Controller Form.
+                    Controller Controller = new Controller();
+                    Controller.Show();
                 }
                 else
                 {
