@@ -54,6 +54,13 @@ namespace APPR_TriviaBlitz_22SD_Dman
             rbtRankingDman.Enabled = false;
 
             tbcNavigationDman.SelectedTab = tbpQuizDman;
+
+            FillQuizData();
+        }
+
+        public void FillQuizData()
+        {
+
         }
     }
 }

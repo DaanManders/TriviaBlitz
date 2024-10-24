@@ -46,12 +46,10 @@
             this.btnAnswerThreeDman = new System.Windows.Forms.Button();
             this.btnAnswerTwoDman = new System.Windows.Forms.Button();
             this.pnlStatisticsDman = new System.Windows.Forms.Panel();
-            this.lblUsernameDman = new System.Windows.Forms.Label();
             this.lblTimeDman = new System.Windows.Forms.Label();
             this.lblStatisticScoreDman = new System.Windows.Forms.Label();
             this.lblScoreDman = new System.Windows.Forms.Label();
             this.lblStatisticTImeDman = new System.Windows.Forms.Label();
-            this.lblStatisticUsernameDman = new System.Windows.Forms.Label();
             this.tbpRankingDman = new System.Windows.Forms.TabPage();
             this.pnlNavigationDman.SuspendLayout();
             this.tbcNavigationDman.SuspendLayout();
@@ -195,7 +193,7 @@
             this.btnAnswerOneDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAnswerOneDman.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAnswerOneDman.ForeColor = System.Drawing.Color.White;
-            this.btnAnswerOneDman.Location = new System.Drawing.Point(30, 290);
+            this.btnAnswerOneDman.Location = new System.Drawing.Point(31, 290);
             this.btnAnswerOneDman.Name = "btnAnswerOneDman";
             this.btnAnswerOneDman.Size = new System.Drawing.Size(180, 59);
             this.btnAnswerOneDman.TabIndex = 8;
@@ -243,7 +241,7 @@
             this.btnAnswerFourDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAnswerFourDman.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAnswerFourDman.ForeColor = System.Drawing.Color.White;
-            this.btnAnswerFourDman.Location = new System.Drawing.Point(588, 290);
+            this.btnAnswerFourDman.Location = new System.Drawing.Point(589, 290);
             this.btnAnswerFourDman.Name = "btnAnswerFourDman";
             this.btnAnswerFourDman.Size = new System.Drawing.Size(180, 59);
             this.btnAnswerFourDman.TabIndex = 4;
@@ -256,7 +254,7 @@
             this.btnAnswerThreeDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAnswerThreeDman.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAnswerThreeDman.ForeColor = System.Drawing.Color.White;
-            this.btnAnswerThreeDman.Location = new System.Drawing.Point(402, 290);
+            this.btnAnswerThreeDman.Location = new System.Drawing.Point(403, 290);
             this.btnAnswerThreeDman.Name = "btnAnswerThreeDman";
             this.btnAnswerThreeDman.Size = new System.Drawing.Size(180, 59);
             this.btnAnswerThreeDman.TabIndex = 3;
@@ -269,7 +267,7 @@
             this.btnAnswerTwoDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAnswerTwoDman.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAnswerTwoDman.ForeColor = System.Drawing.Color.White;
-            this.btnAnswerTwoDman.Location = new System.Drawing.Point(216, 290);
+            this.btnAnswerTwoDman.Location = new System.Drawing.Point(217, 290);
             this.btnAnswerTwoDman.Name = "btnAnswerTwoDman";
             this.btnAnswerTwoDman.Size = new System.Drawing.Size(180, 59);
             this.btnAnswerTwoDman.TabIndex = 2;
@@ -279,32 +277,20 @@
             // pnlStatisticsDman
             // 
             this.pnlStatisticsDman.BackColor = System.Drawing.Color.DarkGray;
-            this.pnlStatisticsDman.Controls.Add(this.lblUsernameDman);
             this.pnlStatisticsDman.Controls.Add(this.lblTimeDman);
             this.pnlStatisticsDman.Controls.Add(this.lblStatisticScoreDman);
             this.pnlStatisticsDman.Controls.Add(this.lblScoreDman);
             this.pnlStatisticsDman.Controls.Add(this.lblStatisticTImeDman);
-            this.pnlStatisticsDman.Controls.Add(this.lblStatisticUsernameDman);
             this.pnlStatisticsDman.Location = new System.Drawing.Point(30, 17);
             this.pnlStatisticsDman.Name = "pnlStatisticsDman";
             this.pnlStatisticsDman.Size = new System.Drawing.Size(738, 29);
             this.pnlStatisticsDman.TabIndex = 0;
             // 
-            // lblUsernameDman
-            // 
-            this.lblUsernameDman.AutoSize = true;
-            this.lblUsernameDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUsernameDman.Location = new System.Drawing.Point(88, 6);
-            this.lblUsernameDman.Name = "lblUsernameDman";
-            this.lblUsernameDman.Size = new System.Drawing.Size(40, 17);
-            this.lblUsernameDman.TabIndex = 6;
-            this.lblUsernameDman.Text = "Daan";
-            // 
             // lblTimeDman
             // 
             this.lblTimeDman.AutoSize = true;
             this.lblTimeDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTimeDman.Location = new System.Drawing.Point(365, 6);
+            this.lblTimeDman.Location = new System.Drawing.Point(56, 6);
             this.lblTimeDman.Name = "lblTimeDman";
             this.lblTimeDman.Size = new System.Drawing.Size(40, 17);
             this.lblTimeDman.TabIndex = 5;
@@ -334,21 +320,11 @@
             // 
             this.lblStatisticTImeDman.AutoSize = true;
             this.lblStatisticTImeDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatisticTImeDman.Location = new System.Drawing.Point(322, 6);
+            this.lblStatisticTImeDman.Location = new System.Drawing.Point(8, 6);
             this.lblStatisticTImeDman.Name = "lblStatisticTImeDman";
             this.lblStatisticTImeDman.Size = new System.Drawing.Size(43, 17);
             this.lblStatisticTImeDman.TabIndex = 2;
             this.lblStatisticTImeDman.Text = "Time:";
-            // 
-            // lblStatisticUsernameDman
-            // 
-            this.lblStatisticUsernameDman.AutoSize = true;
-            this.lblStatisticUsernameDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatisticUsernameDman.Location = new System.Drawing.Point(7, 6);
-            this.lblStatisticUsernameDman.Name = "lblStatisticUsernameDman";
-            this.lblStatisticUsernameDman.Size = new System.Drawing.Size(73, 17);
-            this.lblStatisticUsernameDman.TabIndex = 1;
-            this.lblStatisticUsernameDman.Text = "Username:";
             // 
             // tbpRankingDman
             // 
@@ -396,11 +372,9 @@
         private System.Windows.Forms.Label lblHeaderDman;
         private System.Windows.Forms.Button btnExitDman;
         private System.Windows.Forms.Panel pnlStatisticsDman;
-        private System.Windows.Forms.Label lblStatisticUsernameDman;
         private System.Windows.Forms.Label lblScoreDman;
         private System.Windows.Forms.Label lblStatisticTImeDman;
         private System.Windows.Forms.Label lblStatisticScoreDman;
-        private System.Windows.Forms.Label lblUsernameDman;
         private System.Windows.Forms.Label lblTimeDman;
         private System.Windows.Forms.Button btnAnswerFourDman;
         private System.Windows.Forms.Button btnAnswerThreeDman;
