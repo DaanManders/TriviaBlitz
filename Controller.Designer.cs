@@ -217,21 +217,21 @@
             // lblMetaDman
             // 
             this.lblMetaDman.AutoSize = true;
-            this.lblMetaDman.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMetaDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblMetaDman.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.lblMetaDman.Location = new System.Drawing.Point(26, 128);
+            this.lblMetaDman.Location = new System.Drawing.Point(26, 116);
             this.lblMetaDman.Name = "lblMetaDman";
-            this.lblMetaDman.Size = new System.Drawing.Size(309, 25);
+            this.lblMetaDman.Size = new System.Drawing.Size(225, 17);
             this.lblMetaDman.TabIndex = 6;
             this.lblMetaDman.Text = "Netherlands is a Country in Europe";
             // 
             // lblQuestionDman
             // 
             this.lblQuestionDman.AutoSize = true;
-            this.lblQuestionDman.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblQuestionDman.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblQuestionDman.Location = new System.Drawing.Point(23, 92);
             this.lblQuestionDman.Name = "lblQuestionDman";
-            this.lblQuestionDman.Size = new System.Drawing.Size(482, 38);
+            this.lblQuestionDman.Size = new System.Drawing.Size(313, 25);
             this.lblQuestionDman.TabIndex = 5;
             this.lblQuestionDman.Text = "What is the Capital of Netherlands?";
             // 
