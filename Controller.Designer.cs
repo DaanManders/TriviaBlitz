@@ -300,7 +300,7 @@
             // 
             this.lblStatisticScoreDman.AutoSize = true;
             this.lblStatisticScoreDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatisticScoreDman.Location = new System.Drawing.Point(657, 6);
+            this.lblStatisticScoreDman.Location = new System.Drawing.Point(640, 6);
             this.lblStatisticScoreDman.Name = "lblStatisticScoreDman";
             this.lblStatisticScoreDman.Size = new System.Drawing.Size(45, 17);
             this.lblStatisticScoreDman.TabIndex = 4;
@@ -310,11 +310,11 @@
             // 
             this.lblScoreDman.AutoSize = true;
             this.lblScoreDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblScoreDman.Location = new System.Drawing.Point(704, 6);
+            this.lblScoreDman.Location = new System.Drawing.Point(691, 6);
             this.lblScoreDman.Name = "lblScoreDman";
-            this.lblScoreDman.Size = new System.Drawing.Size(29, 17);
+            this.lblScoreDman.Size = new System.Drawing.Size(43, 17);
             this.lblScoreDman.TabIndex = 3;
-            this.lblScoreDman.Text = "000";
+            this.lblScoreDman.Text = "40000";
             // 
             // lblStatisticTImeDman
             // 
