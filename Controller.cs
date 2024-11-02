@@ -23,6 +23,19 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private readonly SoundPlayer CorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Correct.wav");
         private readonly SoundPlayer IncorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Incorrect.wav");
         private readonly SoundPlayer PowerUp = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/50.wav");
+        private readonly SoundPlayer Special = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Special.wav");
+
+        private const string SpecialQuestion = "Special Question: What is C#?";
+        private readonly List<Answer> SpecialAnswers = new List<Answer>
+        {
+            new Answer { Title = "Extremely Boring", Status = false },
+            new Answer { Title = "Fun", Status = false },
+            new Answer { Title = "Very Fun", Status = true },
+            new Answer { Title = "Extremely Fun", Status = false }
+        };
+
+        private bool SpecialQuestionDisplayed = false;
+        private int SpecialQuestionScore = 200;
 
         public Controller()
         {
@@ -79,6 +92,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
             rbtRankingDman.Enabled = false;
             rbtHomeDman.Enabled = false;
             tbcNavigationDman.SelectedTab = tbpQuizDman;
+            SpecialQuestionDisplayed = false;
             StartGame();
         }
 
@@ -98,6 +112,12 @@ namespace APPR_TriviaBlitz_22SD_Dman
         {
             if (QuestionIndex < RemainingQuestions.Count)
             {
+                if (!SpecialQuestionDisplayed && QuestionIndex < 20 && new Random().Next(0, 5) == 0)
+                {
+                    DisplaySpecialQuestion();
+                    return;
+                }
+
                 Question currentQuestion = RemainingQuestions[QuestionIndex];
                 lblQuestionDman.Text = currentQuestion.Title;
                 lblMetaDman.Text = currentQuestion.Description;
@@ -117,6 +137,31 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 tbcNavigationDman.SelectedTab = tbpHomeDman;
                 ResetGame();
             }
+        }
+
+        private void DisplaySpecialQuestion()
+        {
+            Special.Play();
+
+            SpecialQuestionDisplayed = true;
+            lblQuestionDman.Text = SpecialQuestion;
+            lblMetaDman.Text = "This is a special question!";
+
+            ResetAnswerButtons();
+            DisplayAnswers(SpecialAnswers);
+
+            tbpQuizDman.BackColor = Color.BurlyWood;
+
+            pnlNavigationDman.BackColor = Color.Sienna;
+            pnlStatisticsDman.BackColor = Color.Sienna;
+
+            btnFiftyFiftyDman.BackColor = Color.Chocolate;
+            btnQuitDman.BackColor = Color.Sienna;
+
+            btnAnswerOneDman.BackColor = Color.Sienna;
+            btnAnswerTwoDman.BackColor = Color.Chocolate;
+            btnAnswerThreeDman.BackColor = Color.Sienna;
+            btnAnswerFourDman.BackColor = Color.Chocolate;
         }
 
         private void ResetGame()
@@ -221,47 +266,83 @@ namespace APPR_TriviaBlitz_22SD_Dman
             if (AnswerLocked) return;
             AnswerLocked = true;
 
-            if (SelectedAnswer.Status)
+            if (lblQuestionDman.Text == SpecialQuestion)
             {
-                CorrectSound.Play();
-                MessageBox.Show("Correct Answer!");
-                CorrectAnswersCount++;
-                QuestionIndex++;
-                PlayerScore += 100;
-                lblScoreDman.Text = PlayerScore.ToString();
-
-                if (CorrectAnswersCount == RemainingQuestions.Count)
+                if (SelectedAnswer.Status)
                 {
-                    MessageBox.Show("Congratulations! You've answered all questions correctly!");
-                    ResetGame();
+                    CorrectSound.Play();
+                    MessageBox.Show("Correct Answer! You earned an extra " + SpecialQuestionScore + " points.");
+                    PlayerScore += SpecialQuestionScore;
+                    lblScoreDman.Text = PlayerScore.ToString();
+
+                    tbpQuizDman.BackColor = Color.Transparent;
+
+                    pnlNavigationDman.BackColor = Color.Red;
+                    pnlStatisticsDman.BackColor = Color.DarkGray;
+
+                    btnFiftyFiftyDman.BackColor = Color.DarkRed;
+                    btnQuitDman.BackColor = Color.Red;
+
+                    btnAnswerOneDman.BackColor = Color.Red;
+                    btnAnswerTwoDman.BackColor = Color.DarkRed;
+                    btnAnswerThreeDman.BackColor = Color.Red;
+                    btnAnswerFourDman.BackColor = Color.DarkRed;
+
+                    QuestionIndex++;
+                    GenerateQuestions();
                 }
                 else
                 {
+                    IncorrectSound.Play();
+                    MessageBox.Show("Incorrect Answer! No score added for this special question.");
+                    QuestionIndex++;
                     GenerateQuestions();
                 }
             }
             else
             {
-                IncorrectSound.Play();
-                MessageBox.Show("Incorrect Answer! Moving to the next question.");
-                PlayerScore -= 50;
-
-                if (PlayerScore < 0)
+                if (SelectedAnswer.Status)
                 {
-                    PlayerScore = 0;
-                }
+                    CorrectSound.Play();
+                    MessageBox.Show("Correct Answer!");
+                    CorrectAnswersCount++;
+                    QuestionIndex++;
+                    PlayerScore += 100;
+                    lblScoreDman.Text = PlayerScore.ToString();
 
-                lblScoreDman.Text = PlayerScore.ToString();
-                QuestionIndex++;
-
-                if (QuestionIndex < RemainingQuestions.Count)
-                {
-                    GenerateQuestions();
+                    if (CorrectAnswersCount == RemainingQuestions.Count)
+                    {
+                        MessageBox.Show("Congratulations! You've answered all questions correctly!");
+                        ResetGame();
+                    }
+                    else
+                    {
+                        GenerateQuestions();
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("You've reached the end of the quiz.");
-                    ResetGame();
+                    IncorrectSound.Play();
+                    MessageBox.Show("Incorrect Answer! Moving to the next question.");
+                    PlayerScore -= 50;
+
+                    if (PlayerScore < 0)
+                    {
+                        PlayerScore = 0;
+                    }
+
+                    lblScoreDman.Text = PlayerScore.ToString();
+                    QuestionIndex++;
+
+                    if (QuestionIndex < RemainingQuestions.Count)
+                    {
+                        GenerateQuestions();
+                    }
+                    else
+                    {
+                        MessageBox.Show("You've reached the end of the quiz.");
+                        ResetGame();
+                    }
                 }
             }
 

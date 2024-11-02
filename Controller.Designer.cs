@@ -173,6 +173,7 @@
             // 
             // tbpQuizDman
             // 
+            this.tbpQuizDman.BackColor = System.Drawing.Color.White;
             this.tbpQuizDman.Controls.Add(this.btnFiftyFiftyDman);
             this.tbpQuizDman.Controls.Add(this.btnAnswerOneDman);
             this.tbpQuizDman.Controls.Add(this.btnQuitDman);
@@ -187,7 +188,6 @@
             this.tbpQuizDman.Size = new System.Drawing.Size(805, 389);
             this.tbpQuizDman.TabIndex = 2;
             this.tbpQuizDman.Text = "Quiz";
-            this.tbpQuizDman.UseVisualStyleBackColor = true;
             // 
             // btnAnswerOneDman
             // 
