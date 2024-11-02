@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 
 namespace APPR_TriviaBlitz_22SD_Dman
@@ -17,6 +18,11 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private bool AnswerLocked = false;
         private int CorrectAnswersCount = 0;
         private int PlayerScore = 0;
+        private bool FiftyFiftyUsed = false;
+
+        private readonly SoundPlayer CorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Correct.wav");
+        private readonly SoundPlayer IncorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Incorrect.wav");
+        private readonly SoundPlayer PowerUp = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/50.wav");
 
         public Controller()
         {
@@ -81,6 +87,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
             QuestionIndex = 0;
             CorrectAnswersCount = 0;
             PlayerScore = 0;
+            FiftyFiftyUsed = false;
+            btnFiftyFiftyDman.Visible = true;
             lblScoreDman.Text = PlayerScore.ToString();
             RemainingQuestions = GetQuestionsFromDatabase();
             GenerateQuestions();
@@ -88,7 +96,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         public void GenerateQuestions()
         {
-            if (RemainingQuestions.Count > 0)
+            if (QuestionIndex < RemainingQuestions.Count)
             {
                 Question currentQuestion = RemainingQuestions[QuestionIndex];
                 lblQuestionDman.Text = currentQuestion.Title;
@@ -215,10 +223,11 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
             if (SelectedAnswer.Status)
             {
+                CorrectSound.Play();
                 MessageBox.Show("Correct Answer!");
                 CorrectAnswersCount++;
                 QuestionIndex++;
-                PlayerScore = PlayerScore + 100;
+                PlayerScore += 100;
                 lblScoreDman.Text = PlayerScore.ToString();
 
                 if (CorrectAnswersCount == RemainingQuestions.Count)
@@ -233,67 +242,80 @@ namespace APPR_TriviaBlitz_22SD_Dman
             }
             else
             {
-                MessageBox.Show("Incorrect Answer! Try again.");
-                Button ClickedButton = GetButtonByAnswer(SelectedAnswer);
+                IncorrectSound.Play();
+                MessageBox.Show("Incorrect Answer! Moving to the next question.");
+                PlayerScore -= 50;
 
-                
-                
                 if (PlayerScore < 0)
                 {
                     PlayerScore = 0;
-                    lblScoreDman.Text = PlayerScore.ToString();
-                }
-                else if (PlayerScore > 0)
-                {
-                    PlayerScore = PlayerScore - 25;
-                    lblScoreDman.Text = PlayerScore.ToString();
                 }
 
-                if (ClickedButton != null)
+                lblScoreDman.Text = PlayerScore.ToString();
+                QuestionIndex++;
+
+                if (QuestionIndex < RemainingQuestions.Count)
                 {
-                    ClickedButton.Visible = false;
+                    GenerateQuestions();
                 }
-                AnswerLocked = false;
+                else
+                {
+                    MessageBox.Show("You've reached the end of the quiz.");
+                    ResetGame();
+                }
             }
-        }
 
-        private Button GetButtonByAnswer(Answer SelectedAnswer)
-        {
-            if (SelectedAnswer.Title == btnAnswerOneDman.Text)
-                return btnAnswerOneDman;
-            if (SelectedAnswer.Title == btnAnswerTwoDman.Text)
-                return btnAnswerTwoDman;
-            if (SelectedAnswer.Title == btnAnswerThreeDman.Text)
-                return btnAnswerThreeDman;
-            if (SelectedAnswer.Title == btnAnswerFourDman.Text)
-                return btnAnswerFourDman;
-
-            return null;
+            AnswerLocked = false;
         }
 
         private void ResetAnswerButtons()
         {
+            AnswerLocked = false;
             btnAnswerOneDman.Visible = true;
             btnAnswerTwoDman.Visible = true;
             btnAnswerThreeDman.Visible = true;
             btnAnswerFourDman.Visible = true;
-            AnswerLocked = false;
+        }
+
+        private void btnFiftyFiftyDman_Click(object sender, EventArgs e)
+        {
+            if (FiftyFiftyUsed || Answers == null || Answers.Count < 4)
+                return;
+
+            PowerUp.Play();
+
+            FiftyFiftyUsed = true;
+            btnFiftyFiftyDman.Visible = false;
+
+            List<Button> answerButtons = new List<Button> { btnAnswerOneDman, btnAnswerTwoDman, btnAnswerThreeDman, btnAnswerFourDman };
+            List<int> wrongAnswerIndexes = new List<int>();
+
+            for (int i = 0; i < Answers.Count; i++)
+            {
+                if (!Answers[i].Status)
+                    wrongAnswerIndexes.Add(i);
+            }
+
+            Random random = new Random();
+            for (int i = 0; i < 2; i++)
+            {
+                int indexToHide = wrongAnswerIndexes[random.Next(wrongAnswerIndexes.Count)];
+                answerButtons[indexToHide].Visible = false;
+                wrongAnswerIndexes.Remove(indexToHide);
+            }
         }
     }
 
     public class Question
     {
         public int Id { get; set; }
-
         public string Title { get; set; }
-
         public string Description { get; set; }
     }
 
     public class Answer
     {
         public string Title { get; set; }
-
         public bool Status { get; set; }
     }
 }

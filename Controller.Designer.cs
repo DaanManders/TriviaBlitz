@@ -51,6 +51,7 @@
             this.lblScoreDman = new System.Windows.Forms.Label();
             this.lblStatisticTImeDman = new System.Windows.Forms.Label();
             this.tbpRankingDman = new System.Windows.Forms.TabPage();
+            this.btnFiftyFiftyDman = new System.Windows.Forms.Button();
             this.pnlNavigationDman.SuspendLayout();
             this.tbcNavigationDman.SuspendLayout();
             this.tbpHomeDman.SuspendLayout();
@@ -172,6 +173,7 @@
             // 
             // tbpQuizDman
             // 
+            this.tbpQuizDman.Controls.Add(this.btnFiftyFiftyDman);
             this.tbpQuizDman.Controls.Add(this.btnAnswerOneDman);
             this.tbpQuizDman.Controls.Add(this.btnQuitDman);
             this.tbpQuizDman.Controls.Add(this.lblMetaDman);
@@ -312,9 +314,8 @@
             this.lblScoreDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblScoreDman.Location = new System.Drawing.Point(691, 6);
             this.lblScoreDman.Name = "lblScoreDman";
-            this.lblScoreDman.Size = new System.Drawing.Size(43, 17);
+            this.lblScoreDman.Size = new System.Drawing.Size(0, 17);
             this.lblScoreDman.TabIndex = 3;
-            this.lblScoreDman.Text = "40000";
             // 
             // lblStatisticTImeDman
             // 
@@ -335,6 +336,20 @@
             this.tbpRankingDman.TabIndex = 1;
             this.tbpRankingDman.Text = "Ranking";
             this.tbpRankingDman.UseVisualStyleBackColor = true;
+            // 
+            // btnFiftyFiftyDman
+            // 
+            this.btnFiftyFiftyDman.BackColor = System.Drawing.Color.DarkRed;
+            this.btnFiftyFiftyDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnFiftyFiftyDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnFiftyFiftyDman.ForeColor = System.Drawing.Color.White;
+            this.btnFiftyFiftyDman.Location = new System.Drawing.Point(642, 52);
+            this.btnFiftyFiftyDman.Name = "btnFiftyFiftyDman";
+            this.btnFiftyFiftyDman.Size = new System.Drawing.Size(81, 40);
+            this.btnFiftyFiftyDman.TabIndex = 9;
+            this.btnFiftyFiftyDman.Text = "50/50";
+            this.btnFiftyFiftyDman.UseVisualStyleBackColor = false;
+            this.btnFiftyFiftyDman.Click += new System.EventHandler(this.btnFiftyFiftyDman_Click);
             // 
             // Controller
             // 
@@ -384,5 +399,6 @@
         private System.Windows.Forms.Button btnQuitDman;
         private System.Windows.Forms.Button btnAnswerOneDman;
         private System.Windows.Forms.Button btnStartGameDman;
+        private System.Windows.Forms.Button btnFiftyFiftyDman;
     }
 }
