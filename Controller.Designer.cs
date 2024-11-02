@@ -52,6 +52,7 @@
             this.lblStatisticTImeDman = new System.Windows.Forms.Label();
             this.tbpRankingDman = new System.Windows.Forms.TabPage();
             this.btnFiftyFiftyDman = new System.Windows.Forms.Button();
+            this.btnSkipQuestionDman = new System.Windows.Forms.Button();
             this.pnlNavigationDman.SuspendLayout();
             this.tbcNavigationDman.SuspendLayout();
             this.tbpHomeDman.SuspendLayout();
@@ -174,6 +175,7 @@
             // tbpQuizDman
             // 
             this.tbpQuizDman.BackColor = System.Drawing.Color.White;
+            this.tbpQuizDman.Controls.Add(this.btnSkipQuestionDman);
             this.tbpQuizDman.Controls.Add(this.btnFiftyFiftyDman);
             this.tbpQuizDman.Controls.Add(this.btnAnswerOneDman);
             this.tbpQuizDman.Controls.Add(this.btnQuitDman);
@@ -343,13 +345,27 @@
             this.btnFiftyFiftyDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnFiftyFiftyDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnFiftyFiftyDman.ForeColor = System.Drawing.Color.White;
-            this.btnFiftyFiftyDman.Location = new System.Drawing.Point(642, 52);
+            this.btnFiftyFiftyDman.Location = new System.Drawing.Point(31, 244);
             this.btnFiftyFiftyDman.Name = "btnFiftyFiftyDman";
             this.btnFiftyFiftyDman.Size = new System.Drawing.Size(81, 40);
             this.btnFiftyFiftyDman.TabIndex = 9;
             this.btnFiftyFiftyDman.Text = "50/50";
             this.btnFiftyFiftyDman.UseVisualStyleBackColor = false;
             this.btnFiftyFiftyDman.Click += new System.EventHandler(this.btnFiftyFiftyDman_Click);
+            // 
+            // btnSkipQuestionDman
+            // 
+            this.btnSkipQuestionDman.BackColor = System.Drawing.Color.DarkRed;
+            this.btnSkipQuestionDman.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSkipQuestionDman.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSkipQuestionDman.ForeColor = System.Drawing.Color.White;
+            this.btnSkipQuestionDman.Location = new System.Drawing.Point(693, 244);
+            this.btnSkipQuestionDman.Name = "btnSkipQuestionDman";
+            this.btnSkipQuestionDman.Size = new System.Drawing.Size(75, 40);
+            this.btnSkipQuestionDman.TabIndex = 10;
+            this.btnSkipQuestionDman.Text = "Skip";
+            this.btnSkipQuestionDman.UseVisualStyleBackColor = false;
+            this.btnSkipQuestionDman.Click += new System.EventHandler(this.btnSkipQuestionDman_Click);
             // 
             // Controller
             // 
@@ -400,5 +416,6 @@
         private System.Windows.Forms.Button btnAnswerOneDman;
         private System.Windows.Forms.Button btnStartGameDman;
         private System.Windows.Forms.Button btnFiftyFiftyDman;
+        private System.Windows.Forms.Button btnSkipQuestionDman;
     }
 }

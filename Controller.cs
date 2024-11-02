@@ -19,6 +19,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private int CorrectAnswersCount = 0;
         private int PlayerScore = 0;
         private bool FiftyFiftyUsed = false;
+        private bool SkipUsed = false;
+
 
         private readonly SoundPlayer CorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Correct.wav");
         private readonly SoundPlayer IncorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Incorrect.wav");
@@ -28,9 +30,9 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private const string SpecialQuestion = "Special Question: What is C#?";
         private readonly List<Answer> SpecialAnswers = new List<Answer>
         {
-            new Answer { Title = "Extremely Boring", Status = false },
+            new Answer { Title = "Extremely Boring", Status = true },
             new Answer { Title = "Fun", Status = false },
-            new Answer { Title = "Very Fun", Status = true },
+            new Answer { Title = "Very Fun", Status = false },
             new Answer { Title = "Extremely Fun", Status = false }
         };
 
@@ -66,6 +68,23 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private void btnQuitDman_Click(object sender, EventArgs e)
         {
             tbcNavigationDman.SelectedTab = tbpHomeDman;
+
+            tbpQuizDman.BackColor = Color.Transparent;
+
+            pnlNavigationDman.BackColor = Color.Red;
+            pnlStatisticsDman.BackColor = Color.DarkGray;
+
+            btnFiftyFiftyDman.BackColor = Color.DarkRed;
+            btnSkipQuestionDman.BackColor = Color.DarkRed;
+            btnQuitDman.BackColor = Color.Red;
+
+            btnAnswerOneDman.BackColor = Color.Red;
+            btnAnswerTwoDman.BackColor = Color.DarkRed;
+            btnAnswerThreeDman.BackColor = Color.Red;
+            btnAnswerFourDman.BackColor = Color.DarkRed;
+
+            btnSkipQuestionDman.Enabled = true;
+            btnFiftyFiftyDman.Enabled = true;
         }
 
         public void FillDataTable(string Query)
@@ -93,6 +112,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
             rbtHomeDman.Enabled = false;
             tbcNavigationDman.SelectedTab = tbpQuizDman;
             SpecialQuestionDisplayed = false;
+            SkipUsed = false;
+            btnSkipQuestionDman.Visible = true;
             StartGame();
         }
 
@@ -103,6 +124,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
             PlayerScore = 0;
             FiftyFiftyUsed = false;
             btnFiftyFiftyDman.Visible = true;
+            SkipUsed = false;
             lblScoreDman.Text = PlayerScore.ToString();
             RemainingQuestions = GetQuestionsFromDatabase();
             GenerateQuestions();
@@ -112,7 +134,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
         {
             if (QuestionIndex < RemainingQuestions.Count)
             {
-                if (!SpecialQuestionDisplayed && QuestionIndex < 20 && new Random().Next(0, 5) == 0)
+                if (!SpecialQuestionDisplayed && QuestionIndex > 1 && QuestionIndex < 20 && new Random().Next(0, 5) == 0)
                 {
                     DisplaySpecialQuestion();
                     return;
@@ -141,6 +163,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         private void DisplaySpecialQuestion()
         {
+            btnSkipQuestionDman.Enabled = false;
+            btnFiftyFiftyDman.Enabled = false;
             Special.Play();
 
             SpecialQuestionDisplayed = true;
@@ -156,6 +180,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
             pnlStatisticsDman.BackColor = Color.Sienna;
 
             btnFiftyFiftyDman.BackColor = Color.Chocolate;
+            btnSkipQuestionDman.BackColor = Color.Chocolate;
             btnQuitDman.BackColor = Color.Sienna;
 
             btnAnswerOneDman.BackColor = Color.Sienna;
@@ -271,6 +296,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 if (SelectedAnswer.Status)
                 {
                     CorrectSound.Play();
+                    btnSkipQuestionDman.Enabled = true;
+                    btnFiftyFiftyDman.Enabled = true;
                     MessageBox.Show("Correct Answer! You earned an extra " + SpecialQuestionScore + " points.");
                     PlayerScore += SpecialQuestionScore;
                     lblScoreDman.Text = PlayerScore.ToString();
@@ -281,6 +308,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
                     pnlStatisticsDman.BackColor = Color.DarkGray;
 
                     btnFiftyFiftyDman.BackColor = Color.DarkRed;
+                    btnSkipQuestionDman.BackColor = Color.DarkRed;
                     btnQuitDman.BackColor = Color.Red;
 
                     btnAnswerOneDman.BackColor = Color.Red;
@@ -297,6 +325,23 @@ namespace APPR_TriviaBlitz_22SD_Dman
                     MessageBox.Show("Incorrect Answer! No score added for this special question.");
                     QuestionIndex++;
                     GenerateQuestions();
+
+                    btnSkipQuestionDman.Enabled = true;
+                    btnFiftyFiftyDman.Enabled = true;
+
+                    tbpQuizDman.BackColor = Color.Transparent;
+
+                    pnlNavigationDman.BackColor = Color.Red;
+                    pnlStatisticsDman.BackColor = Color.DarkGray;
+
+                    btnFiftyFiftyDman.BackColor = Color.DarkRed;
+                    btnSkipQuestionDman.BackColor = Color.DarkRed;
+                    btnQuitDman.BackColor = Color.Red;
+
+                    btnAnswerOneDman.BackColor = Color.Red;
+                    btnAnswerTwoDman.BackColor = Color.DarkRed;
+                    btnAnswerThreeDman.BackColor = Color.Red;
+                    btnAnswerFourDman.BackColor = Color.DarkRed;
                 }
             }
             else
@@ -385,6 +430,34 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 wrongAnswerIndexes.Remove(indexToHide);
             }
         }
+
+        private void btnSkipQuestionDman_Click(object sender, EventArgs e)
+        {
+            if (SkipUsed)
+            {
+                btnSkipQuestionDman.Visible = false;
+                return;
+            }
+
+            SkipUsed = true;
+            QuestionIndex++;
+
+            btnSkipQuestionDman.Visible = false;
+
+            if (QuestionIndex < RemainingQuestions.Count)
+            {
+                GenerateQuestions();
+
+                PowerUp.Play();
+                btnSkipQuestionDman.Visible = false;
+            }
+            else
+            {
+                MessageBox.Show("You've reached the end of the quiz.");
+                ResetGame();
+            }
+        }
+
     }
 
     public class Question
