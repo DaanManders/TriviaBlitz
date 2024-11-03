@@ -14,9 +14,11 @@ namespace APPR_TriviaBlitz_22SD_Dman
         string ConnectionString = "Data Source=localhost\\sqlexpress;Initial Catalog=Database101;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
         private List<Answer> Answers;
         private List<Question> RemainingQuestions;
+        private bool IsRegularQuizMode = true;
         private int QuestionIndex = 0;
         private int elapsedTimeInSeconds = 0;
         private bool AnswerLocked = false;
+        private int remainingTimeInSeconds = 80;
         private int CorrectAnswersCount = 0;
         private int SpecialCorrectAnswersCount = 0;
         private bool IsSpecialQuizMode = false;
@@ -57,6 +59,10 @@ namespace APPR_TriviaBlitz_22SD_Dman
             tmrSpecialQuizDman.Interval = 1000;
             tmrSpecialQuizDman.Tick -= tmrSpecialQuizDman_Tick;
             tmrSpecialQuizDman.Tick += tmrSpecialQuizDman_Tick;
+
+            tmrQuizDman.Interval = 1000;
+            tmrQuizDman.Tick -= tmrQuizDman_Tick;
+            tmrQuizDman.Tick += tmrQuizDman_Tick;
         }
 
 
@@ -130,6 +136,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         public void StartGame()
         {
+            IsRegularQuizMode = true;
+            tmrSpecialQuizDman.Stop();
             QuestionIndex = 0;
             CorrectAnswersCount = 0;
             PlayerScore = 0;
@@ -138,6 +146,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
             SkipUsed = false;
             lblScoreDman.Text = PlayerScore.ToString();
             RemainingQuestions = GetQuestionsFromDatabase();
+            remainingTimeInSeconds = 80;
+            tmrQuizDman.Start();
             GenerateQuestions();
         }
 
@@ -237,6 +247,10 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
             tmrSpecialQuizDman.Stop();
             elapsedTimeInSeconds = 0;
+            UpdateTimerDisplay();
+
+            tmrQuizDman.Stop();
+            remainingTimeInSeconds = 80;
             UpdateTimerDisplay();
         }
 
@@ -343,38 +357,20 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 CorrectSound.Play();
                 MessageBox.Show("Correct Answer!");
 
-                if (IsSpecialQuizMode)
-                {
-                    SpecialCorrectAnswersCount++;
-                    lblScoreDman.Text = (++PlayerScore).ToString();
+                CorrectAnswersCount++;
+                QuestionIndex++;
+                GenerateQuestions();
 
-                    if (SpecialCorrectAnswersCount < 10)
-                    {
-                        QuestionIndex++;
-                        GenerateQuestions();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Congratulations! You've completed the special quiz by answering 10 questions correctly!");
-                        ResetGame();
-                    }
+                if (IsRegularQuizMode)
+                {
+                    PlayerScore += 100;
+                    lblScoreDman.Text = PlayerScore.ToString();
+                    remainingTimeInSeconds += 5;
                 }
                 else
                 {
-                    CorrectAnswersCount++;
-                    QuestionIndex++;
-                    PlayerScore += 100;
+                    PlayerScore += 1;
                     lblScoreDman.Text = PlayerScore.ToString();
-
-                    if (CorrectAnswersCount == RemainingQuestions.Count)
-                    {
-                        MessageBox.Show("Congratulations! You've answered all questions correctly!");
-                        ResetGame();
-                    }
-                    else
-                    {
-                        GenerateQuestions();
-                    }
                 }
             }
             else
@@ -382,32 +378,28 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 IncorrectSound.Play();
                 MessageBox.Show("Incorrect Answer! Moving to the next question.");
 
-                if (IsSpecialQuizMode)
+                if (IsRegularQuizMode)
+                {
+                    remainingTimeInSeconds -= 5;
+                    PlayerScore -= 50;
+                    lblScoreDman.Text = PlayerScore.ToString();
+                }
+                else
                 {
                     elapsedTimeInSeconds += 5;
-                    UpdateTimerDisplay();
                 }
 
-                if (!IsSpecialQuizMode)
+                if (IsRegularQuizMode && remainingTimeInSeconds <= 0)
                 {
-                    PlayerScore -= 50;
-                    if (PlayerScore < 0) PlayerScore = 0;
-                    lblScoreDman.Text = PlayerScore.ToString();
-                    QuestionIndex++;
-                }
-                else
-                {
-                    QuestionIndex++;
-                }
-
-                if (QuestionIndex < RemainingQuestions.Count || IsSpecialQuizMode)
-                {
-                    GenerateQuestions();
-                }
-                else
-                {
-                    MessageBox.Show("You've reached the end of the quiz.");
+                    tmrQuizDman.Stop();
+                    MessageBox.Show("Time's up! Game over.");
                     ResetGame();
+                }
+                else
+                {
+                    UpdateTimerDisplay();
+                    QuestionIndex++;
+                    GenerateQuestions();
                 }
             }
 
@@ -481,6 +473,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         private void btnSpecialQuizDman_Click(object sender, EventArgs e)
         {
+            IsRegularQuizMode = false;
+            tmrQuizDman.Stop();
             rbtRankingDman.Enabled = false;
             rbtHomeDman.Enabled = false;
 
@@ -506,9 +500,32 @@ namespace APPR_TriviaBlitz_22SD_Dman
             UpdateTimerDisplay();
         }
 
+        private void tmrQuizDman_Tick(object sender, EventArgs e)
+        {
+            if (remainingTimeInSeconds > 0)
+            {
+                remainingTimeInSeconds--;
+                UpdateTimerDisplay();
+            }
+            else
+            {
+                tmrQuizDman.Stop();
+                MessageBox.Show("Time's up! Game over.");
+                ResetGame();
+            }
+        }
+
         private void UpdateTimerDisplay()
         {
-            TimeSpan time = TimeSpan.FromSeconds(elapsedTimeInSeconds);
+            TimeSpan time;
+            if (IsRegularQuizMode)
+            {
+                time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+            }
+            else
+            {
+                time = TimeSpan.FromSeconds(elapsedTimeInSeconds);
+            }
             lblTimeDman.Text = $"{time.Minutes:D2}:{time.Seconds:D2}";
         }
     }

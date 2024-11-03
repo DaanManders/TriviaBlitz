@@ -56,6 +56,7 @@
             this.lblStatisticTImeDman = new System.Windows.Forms.Label();
             this.tbpRankingDman = new System.Windows.Forms.TabPage();
             this.tmrSpecialQuizDman = new System.Windows.Forms.Timer(this.components);
+            this.tmrQuizDman = new System.Windows.Forms.Timer(this.components);
             this.pnlNavigationDman.SuspendLayout();
             this.tbcNavigationDman.SuspendLayout();
             this.tbpHomeDman.SuspendLayout();
@@ -389,6 +390,10 @@
             // 
             this.tmrSpecialQuizDman.Tick += new System.EventHandler(this.tmrSpecialQuizDman_Tick);
             // 
+            // tmrQuizDman
+            // 
+            this.tmrQuizDman.Tick += new System.EventHandler(this.tmrQuizDman_Tick);
+            // 
             // Controller
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -441,5 +446,6 @@
         private System.Windows.Forms.Button btnSkipQuestionDman;
         private System.Windows.Forms.Button btnSpecialQuizDman;
         private System.Windows.Forms.Timer tmrSpecialQuizDman;
+        private System.Windows.Forms.Timer tmrQuizDman;
     }
 }
