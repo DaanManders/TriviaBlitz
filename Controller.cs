@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 
@@ -10,39 +11,63 @@ namespace APPR_TriviaBlitz_22SD_Dman
 {
     public partial class Controller : Form
     {
-        DataTable DataTable = null;
+        #region APPR TriviaBlitz.
+
+        #region Variable(s) Used In Project.
+
+        #region DataTable Variable(s) Used.
+        DataTable DataTable = null; // Assign DataTable.
+        #endregion
+
+        #region String Variable(s) Used.
+        // Connection String Localhost SQL Express.
         string ConnectionString = "Data Source=localhost\\sqlexpress;Initial Catalog=Database101;Integrated Security=True;Encrypt=True;TrustServerCertificate=True";
-        private List<Answer> Answers;
-        private List<Question> RemainingQuestions;
-        private bool IsRegularQuizMode = true;
-        private int QuestionIndex = 0;
-        private int elapsedTimeInSeconds = 0;
-        private bool AnswerLocked = false;
-        private int remainingTimeInSeconds = 80;
-        private int CorrectAnswersCount = 0;
-        private int SpecialCorrectAnswersCount = 0;
-        private bool IsSpecialQuizMode = false;
-        private int PlayerScore = 0;
-        private bool FiftyFiftyUsed = false;
-        private bool SkipUsed = false;
+        #endregion
 
+        #region List Variable(s) Used.
+        private List<Question> RemainingQuestions; // Array for Remaining Questions.
+        private List<Answer> Answers; // Array for Answers.
+        #endregion
 
+        #region Boolean Variable(s) Used.
+        private bool SpecialQuestionDisplayed = false; // Check for Special Question.
+        private bool SkipUsed = false; // Check for Used Skip Question Ability.
+        private bool FiftyFiftyUsed = false; // Check for Used 50/50 Ability.
+        private bool IsSpecialQuizMode = false; // Check for Special Quiz.
+        private bool IsRegularQuizMode = true; // Check for Regular Quiz.
+        private bool AnswerLocked = false; // Check for Locked Answers.
+        #endregion
+
+        #region Integer Variable(s) Used.
+        private int RemainingTimeInSeconds = 80; // Regular Quiz Time In Seconds.
+        private int SpecialCorrectAnswersCount = 0; // Special Quiz Answer Count.
+        private int ElapsedTimeInSeconds = 0; // Special Quiz Time In Seconds.
+        private int CorrectAnswersCount = 0; // Regular Quiz Answer Count.
+        private int SpecialQuestionScore = 200; // Special Question Score.
+        private int QuestionIndex = 0; // Question List Index.
+        private int PlayerScore = 0; // Score of the User.
+        #endregion
+
+        #region Audio File Variable(s) Used.
         private readonly SoundPlayer CorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Correct.wav");
         private readonly SoundPlayer IncorrectSound = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Incorrect.wav");
         private readonly SoundPlayer PowerUp = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/50.wav");
         private readonly SoundPlayer Special = new SoundPlayer("C:\\Users\\gebruiker\\Documents\\APPR - Applicatie Programmeren\\L3P1\\APPR_TriviaBlitz_22SD_Dman\\Audio/Special.wav");
+        #endregion
 
-        private const string SpecialQuestion = "Special Question: What is C#?";
-        private readonly List<Answer> SpecialAnswers = new List<Answer>
+        #region Special Question Attribute(s).
+        private const string SpecialQuestion = "Special Question: What is C#?"; // Special Question Title.
+        private readonly List<Answer> SpecialAnswers = new List<Answer> // Assign List.
         {
+            // Special Question Answer(s).
             new Answer { Title = "Extremely Boring", Status = true },
             new Answer { Title = "Fun", Status = false },
             new Answer { Title = "Very Fun", Status = false },
             new Answer { Title = "Extremely Fun", Status = false }
         };
+        #endregion
 
-        private bool SpecialQuestionDisplayed = false;
-        private int SpecialQuestionScore = 200;
+        #endregion
 
         public Controller()
         {
@@ -51,39 +76,73 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         private void Controller_Load(object sender, EventArgs e)
         {
+            #region Handle Controller Form Load.
+
+            #region Controller Form Design Setting(s).
             tbcNavigationDman.Appearance = TabAppearance.FlatButtons;
             tbcNavigationDman.SizeMode = TabSizeMode.Fixed;
             tbcNavigationDman.ItemSize = new Size(0, 1);
             rbtHomeDman.Checked = true;
+            #endregion
 
-            tmrSpecialQuizDman.Interval = 1000;
-            tmrSpecialQuizDman.Tick -= tmrSpecialQuizDman_Tick;
-            tmrSpecialQuizDman.Tick += tmrSpecialQuizDman_Tick;
+            #region Setup Special Quiz Timer.
+            tmrSpecialQuizDman.Interval = 1000; // Set 1000ms Interval.
+            tmrSpecialQuizDman.Tick -= tmrSpecialQuizDman_Tick; // Deselect Special Timer.
+            tmrSpecialQuizDman.Tick += tmrSpecialQuizDman_Tick; // Select Special Timer.
+            #endregion
 
-            tmrQuizDman.Interval = 1000;
-            tmrQuizDman.Tick -= tmrQuizDman_Tick;
-            tmrQuizDman.Tick += tmrQuizDman_Tick;
+            #region Setup Regular Quiz Timer.
+            tmrQuizDman.Interval = 1000; // Set 1000ms Interval.
+            tmrQuizDman.Tick -= tmrQuizDman_Tick; // Deselect Regular Timer.
+            tmrQuizDman.Tick += tmrQuizDman_Tick; // Select Regular Timer.
+            #endregion
+
+            #endregion
         }
 
-
+        #region Handle Form Navigation.
 
         private void HandleNavigation(object sender, EventArgs e)
         {
             if (sender == rbtHomeDman)
+                // Navigate to TriviaBlitz Home.
                 tbcNavigationDman.SelectedTab = tbpHomeDman;
+
             else if (sender == rbtRankingDman)
+                // Navigate to TriviaBlitz Ranking.
                 tbcNavigationDman.SelectedTab = tbpRankingDman;
         }
+
+        #endregion
+
+        #region Handle Application Exit.
 
         private void btnExitDman_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
+        #endregion
+
+        #region Handle Quit Game.
+
         private void btnQuitDman_Click(object sender, EventArgs e)
         {
             tbcNavigationDman.SelectedTab = tbpHomeDman;
 
+            btnSkipQuestionDman.Enabled = true;
+            btnFiftyFiftyDman.Enabled = true;
+
+            ResetThemeColors();
+            ResetGame();
+        }
+
+        #endregion
+
+        #region Reset Controller Form Theme Color(s).
+
+        public void ResetThemeColors()
+        {
             tbpQuizDman.BackColor = Color.Transparent;
 
             pnlNavigationDman.BackColor = Color.Red;
@@ -97,17 +156,16 @@ namespace APPR_TriviaBlitz_22SD_Dman
             btnAnswerTwoDman.BackColor = Color.DarkRed;
             btnAnswerThreeDman.BackColor = Color.Red;
             btnAnswerFourDman.BackColor = Color.DarkRed;
-
-            btnSkipQuestionDman.Enabled = true;
-            btnFiftyFiftyDman.Enabled = true;
-
-            ResetGame();
         }
+
+        #endregion
 
         public void FillDataTable(string Query)
         {
+            #region Fill DataTable.
             using (SqlConnection Connection = new SqlConnection(ConnectionString))
             {
+                // Checks DataTable Connection.
                 if (Connection.State == ConnectionState.Closed)
                 {
                     Connection.Open();
@@ -117,39 +175,57 @@ namespace APPR_TriviaBlitz_22SD_Dman
                     using (SqlCommand Command = new SqlCommand(Query, Connection))
                     {
                         SqlDataAdapter Adapter = new SqlDataAdapter(Command);
-                        Adapter.Fill(DataTable);
+                        Adapter.Fill(DataTable); // Fill DataTable.
                     }
                 }
             }
+            #endregion
         }
+
+        #region Start Game.
 
         private void btnStartGameDman_Click(object sender, EventArgs e)
         {
             rbtRankingDman.Enabled = false;
             rbtHomeDman.Enabled = false;
+
             tbcNavigationDman.SelectedTab = tbpQuizDman;
+
             SpecialQuestionDisplayed = false;
+
             SkipUsed = false;
+
             btnSkipQuestionDman.Visible = true;
-            StartGame();
+            StartGame(); // Start Game.
         }
 
         public void StartGame()
         {
             IsRegularQuizMode = true;
+
             tmrSpecialQuizDman.Stop();
+
             QuestionIndex = 0;
             CorrectAnswersCount = 0;
             PlayerScore = 0;
+
             FiftyFiftyUsed = false;
             btnFiftyFiftyDman.Visible = true;
+
             SkipUsed = false;
+
             lblScoreDman.Text = PlayerScore.ToString();
             RemainingQuestions = GetQuestionsFromDatabase();
-            remainingTimeInSeconds = 80;
+
+            RemainingTimeInSeconds = 80;
             tmrQuizDman.Start();
+
             GenerateQuestions();
         }
+
+        #endregion
+
+        #region Generate Questions.
 
         public void GenerateQuestions()
         {
@@ -167,10 +243,11 @@ namespace APPR_TriviaBlitz_22SD_Dman
                     lblMetaDman.Text = currentQuestion.Description;
 
                     Answers = GetAnswersForQuestion(currentQuestion.Id);
-                    ResetAnswerButtons();
+                    ResetAnswerButtons(); // Reset Buttons.
 
                     if (Answers.Count > 0)
                     {
+                        // Shuffle Answers.
                         ShuffleAnswers(Answers);
                         DisplayAnswers(Answers);
                     }
@@ -179,22 +256,33 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 {
                     MessageBox.Show("Congratulations! You've completed the special quiz by answering 10 questions correctly!");
                     tbcNavigationDman.SelectedTab = tbpHomeDman;
-                    ResetGame();
+                    ResetGame(); // Reset.
                 }
             }
             else
             {
                 if (QuestionIndex < RemainingQuestions.Count)
                 {
-                    Question currentQuestion = RemainingQuestions[QuestionIndex];
-                    lblQuestionDman.Text = currentQuestion.Title;
-                    lblMetaDman.Text = currentQuestion.Description;
+                    if (!SpecialQuestionDisplayed && QuestionIndex > 1 && QuestionIndex < 20)
+                    {
+                        // Randomly Decide whether to Show the Special Question.
+                        if (new Random().Next(0, 5) == 0) // 20% Chance to Display the Special Question.
+                        {
+                            DisplaySpecialQuestion();
+                            return; // Exit to Prevent showing Another Question.
+                        }
+                    }
 
-                    Answers = GetAnswersForQuestion(currentQuestion.Id);
-                    ResetAnswerButtons();
+                    Question CurrentQuestion = RemainingQuestions[QuestionIndex];
+                    lblQuestionDman.Text = CurrentQuestion.Title;
+                    lblMetaDman.Text = CurrentQuestion.Description;
+
+                    Answers = GetAnswersForQuestion(CurrentQuestion.Id);
+                    ResetAnswerButtons(); // Reset Buttons.
 
                     if (Answers.Count > 0)
                     {
+                        // Shuffle Answers.
                         ShuffleAnswers(Answers);
                         DisplayAnswers(Answers);
                     }
@@ -203,25 +291,37 @@ namespace APPR_TriviaBlitz_22SD_Dman
                 {
                     MessageBox.Show("Congratulations! You've answered all questions.");
                     tbcNavigationDman.SelectedTab = tbpHomeDman;
-                    ResetGame();
+                    ResetGame(); // Reset.
                 }
             }
         }
 
+        #endregion
+
+        #region Display Special Question.
 
         private void DisplaySpecialQuestion()
         {
             btnSkipQuestionDman.Enabled = false;
             btnFiftyFiftyDman.Enabled = false;
-            Special.Play();
+            Special.Play(); // Play Audio.
 
             SpecialQuestionDisplayed = true;
             lblQuestionDman.Text = SpecialQuestion;
             lblMetaDman.Text = "This is a special question!";
 
-            ResetAnswerButtons();
+            ResetAnswerButtons(); // Reset Question Answers.
             DisplayAnswers(SpecialAnswers);
 
+            SpecialQuestionColors(); // Add Special Theme.
+        }
+
+        #endregion
+
+        #region Special Question Colors.
+
+        public void SpecialQuestionColors()
+        {
             tbpQuizDman.BackColor = Color.BurlyWood;
 
             pnlNavigationDman.BackColor = Color.Sienna;
@@ -237,219 +337,366 @@ namespace APPR_TriviaBlitz_22SD_Dman
             btnAnswerFourDman.BackColor = Color.Chocolate;
         }
 
+        #endregion
+
+        #region Reset Game.
+
         private void ResetGame()
         {
             IsSpecialQuizMode = false;
+
             rbtRankingDman.Enabled = true;
             rbtHomeDman.Enabled = true;
+
             RemainingQuestions = GetQuestionsFromDatabase();
+
             tbcNavigationDman.SelectedTab = tbpHomeDman;
 
             tmrSpecialQuizDman.Stop();
-            elapsedTimeInSeconds = 0;
+            ElapsedTimeInSeconds = 0;
             UpdateTimerDisplay();
 
-            tmrQuizDman.Stop();
-            remainingTimeInSeconds = 80;
+            tmrQuizDman.Stop(); // Stop Timer.
+            RemainingTimeInSeconds = 80;
             UpdateTimerDisplay();
         }
 
+        #endregion
+
+        #region Handle DataTable to Object(s).
 
         private List<Question> GetQuestionsFromDatabase()
         {
-            List<Question> Questions = new List<Question>();
+            #region Get Questions from DataTable.
+            List<Question> Questions = new List<Question>(); // Assign new List.
             string Query = "SELECT TOP 40 Id, Title, Description FROM Questions ORDER BY NEWID()";
-            FillDataTable(Query);
+            FillDataTable(Query); // Execute Query.
 
             foreach (DataRow Row in DataTable.Rows)
             {
                 Questions.Add(new Question
                 {
-                    Id = Convert.ToInt32(Row["Id"]),
-                    Title = Row["Title"].ToString(),
-                    Description = Row["Description"].ToString()
+                    Id = Convert.ToInt32(Row["Id"]), // Assign Result to Variable.
+                    Title = Row["Title"].ToString(), // Assign Result to Variable.
+                    Description = Row["Description"].ToString() // Same Here.
                 });
             }
-            return Questions;
+            return Questions; // Return Object.
+            #endregion
         }
 
         private List<Answer> GetAnswersForQuestion(int QuestionId)
         {
-            List<Answer> Answers = new List<Answer>();
+            #region Get Answers from DataTable.
+            List<Answer> Answers = new List<Answer>(); // Assign new List.
             string Query = $"SELECT Title, Status FROM Answers WHERE Question_Id = {QuestionId}";
-            FillDataTable(Query);
+            FillDataTable(Query); // Execute Query.
 
             foreach (DataRow Row in DataTable.Rows)
             {
                 Answers.Add(new Answer
                 {
-                    Title = Row["Title"].ToString(),
-                    Status = Convert.ToBoolean(Row["Status"])
+                    Title = Row["Title"].ToString(), // Assign Result to Variable.
+                    Status = Convert.ToBoolean(Row["Status"]) // Same Here.
                 });
             }
-            return Answers;
+            return Answers; // Return Object.
+            #endregion
         }
+
+        #endregion
+
+        #region Shuffle Quiz List(s).
+
+        #region Shuffle Questions.
 
         private void ShuffleQuestions(List<Question> Questions)
         {
-            Random Random = new Random();
+            Random Random = new Random(); // Randomize Questions.
             Questions.Sort((x, y) => Random.Next(-1, 2));
         }
 
-        private void ShuffleAnswers(List<Answer> answers)
+        #endregion
+
+        #region Shuffle Question Answers.
+
+        private void ShuffleAnswers(List<Answer> Answers)
         {
-            Random Random = new Random();
-            answers.Sort((x, y) => Random.Next(-1, 2));
+            Random Random = new Random(); // Randomize Question Answers.
+            Answers.Sort((x, y) => Random.Next(-1, 2));
         }
+
+        #endregion
+
+        #endregion
+
+        #region Handle Quiz Answers.
 
         private void DisplayAnswers(List<Answer> Answers)
         {
+            #region Display Question Answers.
             if (Answers.Count >= 4)
             {
+                // Display DataTable Answers.
                 btnAnswerOneDman.Text = Answers[0].Title;
                 btnAnswerTwoDman.Text = Answers[1].Title;
                 btnAnswerThreeDman.Text = Answers[2].Title;
                 btnAnswerFourDman.Text = Answers[3].Title;
 
+                // Deselect Click Event.
                 btnAnswerOneDman.Click -= AnswerButton_Click;
                 btnAnswerTwoDman.Click -= AnswerButton_Click;
                 btnAnswerThreeDman.Click -= AnswerButton_Click;
                 btnAnswerFourDman.Click -= AnswerButton_Click;
 
+                // Select Click Event.
                 btnAnswerOneDman.Click += AnswerButton_Click;
                 btnAnswerTwoDman.Click += AnswerButton_Click;
                 btnAnswerThreeDman.Click += AnswerButton_Click;
                 btnAnswerFourDman.Click += AnswerButton_Click;
             }
+            #endregion
         }
 
         private void AnswerButton_Click(object sender, EventArgs e)
         {
-            if (sender is Button button)
+            Button clickedButton = sender as Button;
+            if (clickedButton == null) return;
+
+            // Determine which button was clicked and get the corresponding answer
+            Answer selectedAnswer = SpecialAnswers.FirstOrDefault(a => a.Title == clickedButton.Text);
+            if (selectedAnswer != null)
             {
-                Answer selectedAnswer = null;
-
-                if (button == btnAnswerOneDman)
-                    selectedAnswer = Answers[0];
-                else if (button == btnAnswerTwoDman)
-                    selectedAnswer = Answers[1];
-                else if (button == btnAnswerThreeDman)
-                    selectedAnswer = Answers[2];
-                else if (button == btnAnswerFourDman)
-                    selectedAnswer = Answers[3];
-
-                if (selectedAnswer != null)
-                {
-                    CheckAnswer(selectedAnswer);
-                }
+                CheckAnswer(selectedAnswer);
             }
         }
+
+        #region Check Answer Eventhandler.
 
         private void CheckAnswer(Answer SelectedAnswer)
         {
             if (AnswerLocked) return;
             AnswerLocked = true;
 
+            // Check if the Answer is Correct.
             bool isCorrect = SelectedAnswer.Status;
 
-            if (isCorrect)
+            // Handle Special Question.
+            if (lblQuestionDman.Text == SpecialQuestion)
             {
-                CorrectSound.Play();
-                MessageBox.Show("Correct Answer!");
-
-                CorrectAnswersCount++;
-                QuestionIndex++;
-                GenerateQuestions();
-
-                if (IsRegularQuizMode)
+                if (isCorrect)
                 {
-                    PlayerScore += 100;
+                    CorrectSound.Play(); // Play Audio.
+                    MessageBox.Show("Correct Answer!");
+
+                    CorrectAnswersCount++;
+                    QuestionIndex++;
+
+                    PlayerScore += 200; // Award 200 Points.
                     lblScoreDman.Text = PlayerScore.ToString();
-                    remainingTimeInSeconds += 5;
+
+                    ResetThemeColors();
+
+                    btnFiftyFiftyDman.Enabled = true;
+                    btnSkipQuestionDman.Enabled = true;
+
+                    if (CorrectAnswersCount == RemainingQuestions.Count)
+                    {
+                        MessageBox.Show("Congratulations! You've answered all questions correctly!");
+                        ResetGame(); // Reset Game.
+                    }
+                    else
+                    {
+                        GenerateQuestions();
+                    }
                 }
                 else
                 {
-                    PlayerScore += 1;
-                    lblScoreDman.Text = PlayerScore.ToString();
+                    IncorrectSound.Play(); // Play Audio
+                    MessageBox.Show("Incorrect Answer! No score added for this special question.");
+
+                    QuestionIndex++;
+
+                    GenerateQuestions();
+
+                    ResetThemeColors();
+
+                    btnFiftyFiftyDman.Enabled = true;
+                    btnSkipQuestionDman.Enabled = true;
                 }
             }
             else
             {
-                IncorrectSound.Play();
-                MessageBox.Show("Incorrect Answer! Moving to the next question.");
+                if (isCorrect)
+                {
+                    CorrectSound.Play(); // play Audio.
+                    MessageBox.Show("Correct Answer!");
 
-                if (IsRegularQuizMode)
-                {
-                    remainingTimeInSeconds -= 5;
-                    PlayerScore -= 50;
-                    lblScoreDman.Text = PlayerScore.ToString();
-                }
-                else
-                {
-                    elapsedTimeInSeconds += 5;
-                }
-
-                if (IsRegularQuizMode && remainingTimeInSeconds <= 0)
-                {
-                    tmrQuizDman.Stop();
-                    MessageBox.Show("Time's up! Game over.");
-                    ResetGame();
-                }
-                else
-                {
-                    UpdateTimerDisplay();
+                    CorrectAnswersCount++;
                     QuestionIndex++;
-                    GenerateQuestions();
+
+                    if (IsRegularQuizMode)
+                    {
+                        PlayerScore += 100; // Add Score.
+                        lblScoreDman.Text = PlayerScore.ToString();
+                        RemainingTimeInSeconds += 5; // Add Time.
+                    }
+
+                    if (IsSpecialQuizMode)
+                    {
+                        SpecialCorrectAnswersCount++; // Increase Count.
+                        lblScoreDman.Text = (SpecialCorrectAnswersCount).ToString();
+                    }
+
+                    if (CorrectAnswersCount == RemainingQuestions.Count)
+                    {
+                        MessageBox.Show("Congratulations! You've answered all questions correctly!");
+                        ResetGame(); // Reset Game.
+                    }
+                    else
+                    {
+                        GenerateQuestions();
+                    }
+                }
+                else
+                {
+                    IncorrectSound.Play(); // Play Audio.
+                    MessageBox.Show("Incorrect Answer! Moving to the next question.");
+
+                    if (IsRegularQuizMode)
+                    {
+                        PlayerScore -= 50; // Subtract Score.
+                        lblScoreDman.Text = PlayerScore.ToString();
+
+                        RemainingTimeInSeconds -= 5; // Subtract Time.
+                        UpdateTimerDisplay(); // Update.
+
+                        if (PlayerScore < 0)
+                        {
+                            PlayerScore = 0; // Can't go Negative.
+                            lblScoreDman.Text = PlayerScore.ToString();
+                        }
+                    }
+
+                    if (IsSpecialQuizMode)
+                    {
+                        ElapsedTimeInSeconds += 5; // Add Time.
+                        UpdateTimerDisplay();
+
+                        lblScoreDman.Text = (SpecialCorrectAnswersCount).ToString();
+                    }
+
+                    QuestionIndex++;
+
+                    if (QuestionIndex < RemainingQuestions.Count)
+                    {
+                        GenerateQuestions();
+                    }
+                    else
+                    {
+                        MessageBox.Show("You've reached the end of the quiz.");
+                        ResetGame();
+                    }
                 }
             }
-
-            AnswerLocked = false;
         }
 
+        #endregion
+
+        #region Reset Question Answer Button(s).
 
         private void ResetAnswerButtons()
         {
             AnswerLocked = false;
+
             btnAnswerOneDman.Visible = true;
             btnAnswerTwoDman.Visible = true;
             btnAnswerThreeDman.Visible = true;
             btnAnswerFourDman.Visible = true;
         }
 
+        #endregion
+
+        #endregion
+
+        #region Handle Special Quiz Button.
+
+        private void btnSpecialQuizDman_Click(object sender, EventArgs e)
+        {
+            IsRegularQuizMode = false; // Set Regular Mode to False.
+            IsSpecialQuizMode = true; // Set Special Mode to True.
+
+            rbtRankingDman.Enabled = false;
+            rbtHomeDman.Enabled = false;
+
+            tmrQuizDman.Stop(); // Stop Regular Timer.
+            ElapsedTimeInSeconds = 0; // Reset Timer.
+            tmrSpecialQuizDman.Start(); // Start.
+
+            tbcNavigationDman.SelectedTab = tbpQuizDman;
+
+            QuestionIndex = 0;
+            SpecialCorrectAnswersCount = 0;
+            RemainingQuestions = GetQuestionsFromDatabase();
+
+            FiftyFiftyUsed = false; // Reset 50/50 Ability.
+            SkipUsed = false; // Reset Skip Ability.
+
+            PlayerScore = 0; // Reset Player Score.
+            lblScoreDman.Text = PlayerScore.ToString();
+
+            GenerateQuestions();
+        }
+
+        #endregion
+
+        #region Project Special Ability Setting(s).
+
+        #region Handle 50/50 Ability. 
+
         private void btnFiftyFiftyDman_Click(object sender, EventArgs e)
         {
+            // Checks if 50/50 Ability was Used.
             if (FiftyFiftyUsed || Answers == null || Answers.Count < 4)
                 return;
 
-            PowerUp.Play();
+            PowerUp.Play(); // Play Audio.
 
-            FiftyFiftyUsed = true;
             btnFiftyFiftyDman.Visible = false;
+            FiftyFiftyUsed = true;
 
-            List<Button> answerButtons = new List<Button> { btnAnswerOneDman, btnAnswerTwoDman, btnAnswerThreeDman, btnAnswerFourDman };
-            List<int> wrongAnswerIndexes = new List<int>();
+            // Assigns Question Answers to List.
+            List<Button> AnswerButtons = new List<Button> { btnAnswerOneDman, btnAnswerTwoDman, btnAnswerThreeDman, btnAnswerFourDman };
+            List<int> WrongAnswerIndexes = new List<int>(); // Generate Wrong Answer Indexes.
 
             for (int i = 0; i < Answers.Count; i++)
             {
                 if (!Answers[i].Status)
-                    wrongAnswerIndexes.Add(i);
+                    // Adds Index to Wrong Answers.
+                    WrongAnswerIndexes.Add(i);
             }
 
-            Random random = new Random();
+            Random Random = new Random();
+
             for (int i = 0; i < 2; i++)
             {
-                int indexToHide = wrongAnswerIndexes[random.Next(wrongAnswerIndexes.Count)];
-                answerButtons[indexToHide].Visible = false;
-                wrongAnswerIndexes.Remove(indexToHide);
+                // Randomizes the Wrong Answer Index(s).
+                int IndexToHide = WrongAnswerIndexes[Random.Next(WrongAnswerIndexes.Count)];
+                AnswerButtons[IndexToHide].Visible = false; // Hide(s) Wrong Answers.
+                WrongAnswerIndexes.Remove(IndexToHide);
             }
         }
+
+        #endregion
+
+        #region Handle Skip Question Ability.
 
         private void btnSkipQuestionDman_Click(object sender, EventArgs e)
         {
             if (SkipUsed)
             {
                 btnSkipQuestionDman.Visible = false;
-                return;
+                return; // Return Variable.
             }
 
             SkipUsed = true;
@@ -457,89 +704,111 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
             btnSkipQuestionDman.Visible = false;
 
+            // Handle(s) Question Index due Skip Ability.
             if (QuestionIndex < RemainingQuestions.Count)
             {
                 GenerateQuestions();
 
-                PowerUp.Play();
                 btnSkipQuestionDman.Visible = false;
+                PowerUp.Play(); // Play Audio.
             }
             else
             {
                 MessageBox.Show("You've reached the end of the quiz.");
-                ResetGame();
+                ResetGame(); // Reset.
             }
         }
 
-        private void btnSpecialQuizDman_Click(object sender, EventArgs e)
-        {
-            IsRegularQuizMode = false;
-            tmrQuizDman.Stop();
-            rbtRankingDman.Enabled = false;
-            rbtHomeDman.Enabled = false;
+        #endregion
 
-            tbcNavigationDman.SelectedTab = tbpQuizDman;
-            QuestionIndex = 0;
-            SpecialCorrectAnswersCount = 0;
-            PlayerScore = 0;
-            FiftyFiftyUsed = false;
-            SkipUsed = false;
-            IsSpecialQuizMode = true;
-            lblScoreDman.Text = PlayerScore.ToString();
+        #endregion
 
-            RemainingQuestions = GetQuestionsFromDatabase();
-            elapsedTimeInSeconds = 0;
-            tmrSpecialQuizDman.Start();
+        #region Project Timer Setting(s).
 
-            GenerateQuestions();
-        }
+        #region Special Quiz Timer Setting(s).
 
         private void tmrSpecialQuizDman_Tick(object sender, EventArgs e)
         {
-            elapsedTimeInSeconds++;
-            UpdateTimerDisplay();
+            ElapsedTimeInSeconds++; // Count Up the Timer.
+            UpdateTimerDisplay(); // Update Display.
         }
+
+        #endregion
+
+        #region Regular Quiz Timer Setting(s).
 
         private void tmrQuizDman_Tick(object sender, EventArgs e)
         {
-            if (remainingTimeInSeconds > 0)
+            if (RemainingTimeInSeconds > 0)
             {
-                remainingTimeInSeconds--;
-                UpdateTimerDisplay();
+                RemainingTimeInSeconds--; // Count Down the Timer.
+                UpdateTimerDisplay(); // Change Display.
             }
             else
             {
-                tmrQuizDman.Stop();
+                tmrQuizDman.Stop(); // Stop Timer.
                 MessageBox.Show("Time's up! Game over.");
-                ResetGame();
+                ResetGame(); // Reset Game.
             }
         }
+
+        #endregion
+
+        #region Update Time(s) Display.
 
         private void UpdateTimerDisplay()
         {
-            TimeSpan time;
+            // Represent Timer Interval.
+            TimeSpan Time;
+
             if (IsRegularQuizMode)
             {
-                time = TimeSpan.FromSeconds(remainingTimeInSeconds);
+                // If User is Playing Regular Quiz Mode.
+                Time = TimeSpan.FromSeconds(RemainingTimeInSeconds);
             }
             else
             {
-                time = TimeSpan.FromSeconds(elapsedTimeInSeconds);
+                // If User is Playing Special Quiz Mode.
+                Time = TimeSpan.FromSeconds(ElapsedTimeInSeconds);
             }
-            lblTimeDman.Text = $"{time.Minutes:D2}:{time.Seconds:D2}";
+
+            // Update Timer Label.
+            lblTimeDman.Text = $"{Time.Minutes:D2}:{Time.Seconds:D2}";
         }
+
+        #endregion
+
+        #endregion
+
+        #endregion
     }
+
+    #region Project Classes Used.
+
+    #region Public Question Class.
 
     public class Question
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public int Id { get; set; } // Set Question Id.
+
+        public string Title { get; set; } // Set Question Title.
+
+        public string Description { get; set; } // Set Question Description.
     }
+
+    #endregion
+
+    #region Public Answer Class.
 
     public class Answer
     {
-        public string Title { get; set; }
-        public bool Status { get; set; }
+        public string Title { get; set; } // Set Answer Title.
+
+        public bool Status { get; set; } // Set Answer Status.
     }
+
+    #endregion
+
+    #endregion
 }
+
