@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Linq;
 using System.Media;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace APPR_TriviaBlitz_22SD_Dman
 {
     public partial class Controller : Form
     {
-        #region APPR TriviaBlitz.
+        #region Project APPR TriviaBlitz.
 
         #region Variable(s) Used In Project.
 
@@ -460,15 +461,34 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         private void AnswerButton_Click(object sender, EventArgs e)
         {
-            Button clickedButton = sender as Button;
-            if (clickedButton == null) return;
-
-            // Determine which button was clicked and get the corresponding answer
-            Answer selectedAnswer = SpecialAnswers.FirstOrDefault(a => a.Title == clickedButton.Text);
-            if (selectedAnswer != null)
+            #region Handle Answer Click.
+            if (sender is Button Button)
             {
-                CheckAnswer(selectedAnswer);
+                Answer SelectedAnswer = null;
+
+                // Assign First Answer Button.
+                if (Button == btnAnswerOneDman)
+                    SelectedAnswer = Answers[0];
+
+                // Assign Second Answer Button.
+                else if (Button == btnAnswerTwoDman)
+                    SelectedAnswer = Answers[1];
+
+                // Assign Third Answer Button.
+                else if (Button == btnAnswerThreeDman)
+                    SelectedAnswer = Answers[2];
+
+                // Assign Fourth Answer Button.
+                else if (Button == btnAnswerFourDman)
+                    SelectedAnswer = Answers[3];
+
+                if (SelectedAnswer != null)
+                {
+                    // Checks Selected Button.
+                    CheckAnswer(SelectedAnswer);
+                }
             }
+            #endregion
         }
 
         #region Check Answer Eventhandler.
@@ -551,6 +571,7 @@ namespace APPR_TriviaBlitz_22SD_Dman
                     if (CorrectAnswersCount == RemainingQuestions.Count)
                     {
                         MessageBox.Show("Congratulations! You've answered all questions correctly!");
+                        ExecuteQuery("INSERT INTO [dbo].[Leaderboard] ([Username], [Score]) VALUES (N'" + "Test" + "', N'" + PlayerScore + "')");
                         ResetGame(); // Reset Game.
                     }
                     else
@@ -811,4 +832,3 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
     #endregion
 }
-
