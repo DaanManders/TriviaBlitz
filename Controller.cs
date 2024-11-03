@@ -15,8 +15,11 @@ namespace APPR_TriviaBlitz_22SD_Dman
         private List<Answer> Answers;
         private List<Question> RemainingQuestions;
         private int QuestionIndex = 0;
+        private int elapsedTimeInSeconds = 0;
         private bool AnswerLocked = false;
         private int CorrectAnswersCount = 0;
+        private int SpecialCorrectAnswersCount = 0;
+        private bool IsSpecialQuizMode = false;
         private int PlayerScore = 0;
         private bool FiftyFiftyUsed = false;
         private bool SkipUsed = false;
@@ -50,7 +53,13 @@ namespace APPR_TriviaBlitz_22SD_Dman
             tbcNavigationDman.SizeMode = TabSizeMode.Fixed;
             tbcNavigationDman.ItemSize = new Size(0, 1);
             rbtHomeDman.Checked = true;
+
+            tmrSpecialQuizDman.Interval = 1000;
+            tmrSpecialQuizDman.Tick -= tmrSpecialQuizDman_Tick;
+            tmrSpecialQuizDman.Tick += tmrSpecialQuizDman_Tick;
         }
+
+
 
         private void HandleNavigation(object sender, EventArgs e)
         {
@@ -85,6 +94,8 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
             btnSkipQuestionDman.Enabled = true;
             btnFiftyFiftyDman.Enabled = true;
+
+            ResetGame();
         }
 
         public void FillDataTable(string Query)
@@ -132,34 +143,61 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         public void GenerateQuestions()
         {
-            if (QuestionIndex < RemainingQuestions.Count)
+            if (IsSpecialQuizMode)
             {
-                if (!SpecialQuestionDisplayed && QuestionIndex > 1 && QuestionIndex < 20 && new Random().Next(0, 5) == 0)
+                if (SpecialCorrectAnswersCount < 10)
                 {
-                    DisplaySpecialQuestion();
-                    return;
+                    if (QuestionIndex >= RemainingQuestions.Count)
+                    {
+                        QuestionIndex = 0;
+                    }
+
+                    Question currentQuestion = RemainingQuestions[QuestionIndex];
+                    lblQuestionDman.Text = currentQuestion.Title;
+                    lblMetaDman.Text = currentQuestion.Description;
+
+                    Answers = GetAnswersForQuestion(currentQuestion.Id);
+                    ResetAnswerButtons();
+
+                    if (Answers.Count > 0)
+                    {
+                        ShuffleAnswers(Answers);
+                        DisplayAnswers(Answers);
+                    }
                 }
-
-                Question currentQuestion = RemainingQuestions[QuestionIndex];
-                lblQuestionDman.Text = currentQuestion.Title;
-                lblMetaDman.Text = currentQuestion.Description;
-
-                Answers = GetAnswersForQuestion(currentQuestion.Id);
-                ResetAnswerButtons();
-
-                if (Answers.Count > 0)
+                else
                 {
-                    ShuffleAnswers(Answers);
-                    DisplayAnswers(Answers);
+                    MessageBox.Show("Congratulations! You've completed the special quiz by answering 10 questions correctly!");
+                    tbcNavigationDman.SelectedTab = tbpHomeDman;
+                    ResetGame();
                 }
             }
             else
             {
-                MessageBox.Show("Congratulations! You've answered all questions.");
-                tbcNavigationDman.SelectedTab = tbpHomeDman;
-                ResetGame();
+                if (QuestionIndex < RemainingQuestions.Count)
+                {
+                    Question currentQuestion = RemainingQuestions[QuestionIndex];
+                    lblQuestionDman.Text = currentQuestion.Title;
+                    lblMetaDman.Text = currentQuestion.Description;
+
+                    Answers = GetAnswersForQuestion(currentQuestion.Id);
+                    ResetAnswerButtons();
+
+                    if (Answers.Count > 0)
+                    {
+                        ShuffleAnswers(Answers);
+                        DisplayAnswers(Answers);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Congratulations! You've answered all questions.");
+                    tbcNavigationDman.SelectedTab = tbpHomeDman;
+                    ResetGame();
+                }
             }
         }
+
 
         private void DisplaySpecialQuestion()
         {
@@ -191,10 +229,17 @@ namespace APPR_TriviaBlitz_22SD_Dman
 
         private void ResetGame()
         {
+            IsSpecialQuizMode = false;
             rbtRankingDman.Enabled = true;
             rbtHomeDman.Enabled = true;
             RemainingQuestions = GetQuestionsFromDatabase();
+            tbcNavigationDman.SelectedTab = tbpHomeDman;
+
+            tmrSpecialQuizDman.Stop();
+            elapsedTimeInSeconds = 0;
+            UpdateTimerDisplay();
         }
+
 
         private List<Question> GetQuestionsFromDatabase()
         {
@@ -291,65 +336,31 @@ namespace APPR_TriviaBlitz_22SD_Dman
             if (AnswerLocked) return;
             AnswerLocked = true;
 
-            if (lblQuestionDman.Text == SpecialQuestion)
+            bool isCorrect = SelectedAnswer.Status;
+
+            if (isCorrect)
             {
-                if (SelectedAnswer.Status)
+                CorrectSound.Play();
+                MessageBox.Show("Correct Answer!");
+
+                if (IsSpecialQuizMode)
                 {
-                    CorrectSound.Play();
-                    btnSkipQuestionDman.Enabled = true;
-                    btnFiftyFiftyDman.Enabled = true;
-                    MessageBox.Show("Correct Answer! You earned an extra " + SpecialQuestionScore + " points.");
-                    PlayerScore += SpecialQuestionScore;
-                    lblScoreDman.Text = PlayerScore.ToString();
+                    SpecialCorrectAnswersCount++;
+                    lblScoreDman.Text = (++PlayerScore).ToString();
 
-                    tbpQuizDman.BackColor = Color.Transparent;
-
-                    pnlNavigationDman.BackColor = Color.Red;
-                    pnlStatisticsDman.BackColor = Color.DarkGray;
-
-                    btnFiftyFiftyDman.BackColor = Color.DarkRed;
-                    btnSkipQuestionDman.BackColor = Color.DarkRed;
-                    btnQuitDman.BackColor = Color.Red;
-
-                    btnAnswerOneDman.BackColor = Color.Red;
-                    btnAnswerTwoDman.BackColor = Color.DarkRed;
-                    btnAnswerThreeDman.BackColor = Color.Red;
-                    btnAnswerFourDman.BackColor = Color.DarkRed;
-
-                    QuestionIndex++;
-                    GenerateQuestions();
+                    if (SpecialCorrectAnswersCount < 10)
+                    {
+                        QuestionIndex++;
+                        GenerateQuestions();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Congratulations! You've completed the special quiz by answering 10 questions correctly!");
+                        ResetGame();
+                    }
                 }
                 else
                 {
-                    IncorrectSound.Play();
-                    MessageBox.Show("Incorrect Answer! No score added for this special question.");
-                    QuestionIndex++;
-                    GenerateQuestions();
-
-                    btnSkipQuestionDman.Enabled = true;
-                    btnFiftyFiftyDman.Enabled = true;
-
-                    tbpQuizDman.BackColor = Color.Transparent;
-
-                    pnlNavigationDman.BackColor = Color.Red;
-                    pnlStatisticsDman.BackColor = Color.DarkGray;
-
-                    btnFiftyFiftyDman.BackColor = Color.DarkRed;
-                    btnSkipQuestionDman.BackColor = Color.DarkRed;
-                    btnQuitDman.BackColor = Color.Red;
-
-                    btnAnswerOneDman.BackColor = Color.Red;
-                    btnAnswerTwoDman.BackColor = Color.DarkRed;
-                    btnAnswerThreeDman.BackColor = Color.Red;
-                    btnAnswerFourDman.BackColor = Color.DarkRed;
-                }
-            }
-            else
-            {
-                if (SelectedAnswer.Status)
-                {
-                    CorrectSound.Play();
-                    MessageBox.Show("Correct Answer!");
                     CorrectAnswersCount++;
                     QuestionIndex++;
                     PlayerScore += 100;
@@ -365,34 +376,44 @@ namespace APPR_TriviaBlitz_22SD_Dman
                         GenerateQuestions();
                     }
                 }
-                else
+            }
+            else
+            {
+                IncorrectSound.Play();
+                MessageBox.Show("Incorrect Answer! Moving to the next question.");
+
+                if (IsSpecialQuizMode)
                 {
-                    IncorrectSound.Play();
-                    MessageBox.Show("Incorrect Answer! Moving to the next question.");
+                    elapsedTimeInSeconds += 5;
+                    UpdateTimerDisplay();
+                }
+
+                if (!IsSpecialQuizMode)
+                {
                     PlayerScore -= 50;
-
-                    if (PlayerScore < 0)
-                    {
-                        PlayerScore = 0;
-                    }
-
+                    if (PlayerScore < 0) PlayerScore = 0;
                     lblScoreDman.Text = PlayerScore.ToString();
                     QuestionIndex++;
+                }
+                else
+                {
+                    QuestionIndex++;
+                }
 
-                    if (QuestionIndex < RemainingQuestions.Count)
-                    {
-                        GenerateQuestions();
-                    }
-                    else
-                    {
-                        MessageBox.Show("You've reached the end of the quiz.");
-                        ResetGame();
-                    }
+                if (QuestionIndex < RemainingQuestions.Count || IsSpecialQuizMode)
+                {
+                    GenerateQuestions();
+                }
+                else
+                {
+                    MessageBox.Show("You've reached the end of the quiz.");
+                    ResetGame();
                 }
             }
 
             AnswerLocked = false;
         }
+
 
         private void ResetAnswerButtons()
         {
@@ -458,6 +479,38 @@ namespace APPR_TriviaBlitz_22SD_Dman
             }
         }
 
+        private void btnSpecialQuizDman_Click(object sender, EventArgs e)
+        {
+            rbtRankingDman.Enabled = false;
+            rbtHomeDman.Enabled = false;
+
+            tbcNavigationDman.SelectedTab = tbpQuizDman;
+            QuestionIndex = 0;
+            SpecialCorrectAnswersCount = 0;
+            PlayerScore = 0;
+            FiftyFiftyUsed = false;
+            SkipUsed = false;
+            IsSpecialQuizMode = true;
+            lblScoreDman.Text = PlayerScore.ToString();
+
+            RemainingQuestions = GetQuestionsFromDatabase();
+            elapsedTimeInSeconds = 0;
+            tmrSpecialQuizDman.Start();
+
+            GenerateQuestions();
+        }
+
+        private void tmrSpecialQuizDman_Tick(object sender, EventArgs e)
+        {
+            elapsedTimeInSeconds++;
+            UpdateTimerDisplay();
+        }
+
+        private void UpdateTimerDisplay()
+        {
+            TimeSpan time = TimeSpan.FromSeconds(elapsedTimeInSeconds);
+            lblTimeDman.Text = $"{time.Minutes:D2}:{time.Seconds:D2}";
+        }
     }
 
     public class Question
